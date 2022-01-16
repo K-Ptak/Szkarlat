@@ -1,0 +1,125 @@
+0
+Bar karczmy
+Kierunki: E S 
+W rogu karczmy dostrzegasz w miarê ma³y bar, przy którym siedz¹ niektórzy z klientów, topi¹c swoje smutki i uœmierzaj¹c rany w lokalnie warzonym piwie.
+Karczmarz z uœmiechem poleruje kufle po piwie i zagaduje klientów.
+1
+Karczma
+Kierunki: S W 
+Ta stara karczma widzia³a ju¿ swoje lepsze dni, lecz wci¹¿ jest pe³na klientów, a przynajmniej tych którzy mieli szczêœcie prze¿yæ kolejny dzieñ na arenie.
+0
+2
+Stoisko 
+Kierunki: E S 
+Spostrzegasz drobny drewniany straganik, który jest ledwo widoczny poœród wielkich skrzyñ z ró¿nymi artyku³ami.
+Sprzedawca stoi za lekko po³amanym stolikiem i przegl¹da skrzynie z zapasami.
+3
+Stary targ
+Kierunki: E S W
+Stoisz na w miarê du¿ym targu jak na rozmiar ca³ego piêtra sfery, mimo to wiêkszoœæ stanowisk jest opuszczona b¹dŸ zniszczona
+0
+4
+Stary targ
+Kierunki: S W
+Stoisz na w miarê du¿ym targu jak na rozmiar ca³ego piêtra sfery, mimo to wiêkszoœæ stanowisk jest opuszczona b¹dŸ zniszczona
+0
+5
+Karczma
+Kierunki: N E 
+Stara karczma widzia³a ju¿ swoje lepsze dni, lecz wci¹¿ jest pe³na klientów, a przynajmniej tych którzy mieli szczêœcie prze¿yæ kolejny dzieñ na arenie.
+0
+6
+Karczma
+Kierunki: N S W
+Stara karczma widzia³a ju¿ swoje lepsze dni, lecz wci¹¿ jest pe³na klientów, a przynajmniej tych którzy mieli szczêœcie prze¿yæ kolejny dzieñ na arenie.
+0
+7
+Stary targ
+Kierunki: N E S
+Stoisz na w miarê du¿ym targu jak na rozmiar ca³ego piêtra sfery, mimo to wiêkszoœæ stanowisk jest opuszczona b¹dŸ zniszczona
+0
+8
+Stary targ
+Kierunki: N E S W
+Stoisz na w miarê du¿ym targu jak na rozmiar ca³ego piêtra sfery, mimo to wiêkszoœæ stanowisk jest opuszczona b¹dŸ zniszczona
+0
+9
+Stary targ
+Kierunki: N S W
+Stoisz na w miarê du¿ym targu jak na rozmiar ca³ego piêtra sfery, mimo to wiêkszoœæ stanowisk jest opuszczona b¹dŸ zniszczona
+0
+10
+Garnizon stra¿nika
+Kierunki: E
+Ma³y posterunek ze stra¿nikami, maj¹cymi pilnowaæ porz¹dku i powstrzymywaæ jakiekolwiek próby buntu na piêtrze. Podwójna stalowa krata wzmocniona szkar³atem dzieli ciebie od windy, jedynej drogi ucieczki.
+Stra¿nik strze¿e bramy do windy wyjœciowej.
+11
+Plac
+Kierunki: N E S W 
+Znajdujesz siê w jednym z rogu placu. Na pó³nocy dostrzegasz jak¹œ karczmê, a na zachodzie widzisz przygl¹daj¹cego Ci siê stra¿nika. 
+0
+12
+Œrodek piêtra
+Kierunki: N E S W
+Stoisz na samym œrodku twojego piêtra w sferze, w kamiennej pod³odze widzisz liczne zadrapania i pêkniêcia, jakby ktoœ chcia³ przebiæ j¹ na wylot. Na pó³noc widzisz spory targ, a na wschodzie znajduje siê winda do areny.
+0
+13
+Tablica obok wejœcia do areny
+Kierunki: N E W
+Przed Tob¹ stoi niewielka tablica na której przybite s¹ przeró¿ne zlecenia na stwory i zawodników z areny. Wœród nich dostrzegasz nawet zlecenie na twoj¹ g³owê...
+Zamaskowany Naganiacz pilnuje tablicy i milcz¹c wrêcza zap³ate w zamian za trofea pokonanych oponentów z areny.
+14
+Wyci¹g do areny
+Kierunki: N S W
+Stoisz na przyrdzewia³ej platformie windy, która ³¹czy wszystkie kondygnacje Sfery i prowadzi wszystkich awanturników na arene. Do platformy przymocowany jest ma³y silnik który czerpie szkar³at bezpoœrednio z areny. W kierunku po³udniowym widzisz potê¿ne drzwi areny.
+0
+15
+Pracownia kowala
+Kierunki: E S
+Wchodzisz do dosyæ g³oœnej pracowni kowala, którego dostrzegasz w g³êbi pomieszczenia. Na œcianach widaæ orê¿ wszelakiego typu, od broni palnej po miecze i pancerze. Po bli¿szej inspekcji, zauwa¿asz ¿e na wiêkszoœci broni widaæ œlady krwi po poprzednich w³aœcicielach...
+0
+16
+Przyciemniony fragment placu
+Kierunki: N E W
+Czêœæ placu, która nie jest bezpoœrednio oœwietlana przez ¿adn¹ lampê, ani nie ma ¿adnego okna na zewn¹trz. Na zachodzie s³ychaæ brzdêk metalu, a od czasu do czasu widaæ liczne iskry.
+0
+17
+Kamienny plac
+Kierunki: N S W
+Stoisz na widocznie wydeptanym placu, z którego masz widok na wiêkszoœæ piêtra sfery. Na po³udniu znajduje siê zau³ek w którym stoi Lilith, a z zachodu s³ychaæ metaliczne dŸwiêki.
+0
+18
+Arena
+Kierunki: E S
+Widzisz olbrzymi¹ arenê, pe³n¹ walcz¹cych ze sob¹ ludzi i róŸnych nieznanych ci zwierz¹t. Grube œciany uniemo¿liwiaj¹ jak¹kolwiek próbê ucieczki, a zamontowane w nich specjalne wentyle œci¹gaj¹ szkar³at, który unosi siê w powietrzu.
+0
+19
+Arena
+Kierunki: N S W
+Widzisz olbrzymi¹ arenê, pe³n¹ walcz¹cych ze sob¹ ludzi i róŸnych nieznanych ci zwierz¹t. Grube œciany uniemo¿liwiaj¹ jak¹kolwiek próbê ucieczki, a zamontowane w nich specjalne wentyle œci¹gaj¹ szkar³at, który unosi siê w powietrzu.
+0
+20
+Pracownia kowala
+Kierunki: N E
+Stoisz przy mechanicznym piecu pracowni, z którego widaæ czerwony p³omieñ. Obok starszy cz³owiek pracuje przy kowadle, g³oœno podgwizduj¹c.
+Kowal kuje dziwnie wygl¹daj¹cy miecz i zerka na swojego syna.
+21
+K¹cik zbrojmistrza
+Kierunki: W
+Podchodzisz do k¹ta w którym znajduje siê ma³y warsztacik syna kowala, przy którym naprawia i czyœci pancerze zebrane z areny.
+Zbrojmistrz siedzi na skrzypi¹cym krzeœle i poleruje pancerz pokryty runami.
+22
+Zau³ek ze skrzyni¹
+Kierunki: N
+Ma³y zau³ek w którym Lilith uwolni³a ciê ze skrzyni Barona. W rogu znajduje siê twoje prowizoryczne pos³anie, zrobione ze starych szmat i desek skrzyni. Na przeciwko znajduje siê œpiwór Lilith. Gdy ws³uchaæ siê w ciszê, mo¿na us³yszeæ brzdêk metalu dochodz¹cy z pracowni zbrojmistrza.
+Lilith opiera siê o œciane, nuc¹c jak¹œ melodiê.
+23
+Arena
+Kierunki: N E
+Widzisz olbrzymi¹ arenê, pe³n¹ walcz¹cych ze sob¹ ludzi i róŸnych nieznanych ci zwierz¹t. Grube œciany uniemo¿liwiaj¹ jak¹kolwiek próbê ucieczki, a zamontowane w nich specjalne wentyle œci¹gaj¹ szkar³at, który unosi siê w powietrzu.
+0
+24
+Arena
+Kierunki: N W	
+Widzisz olbrzymi¹ arenê, pe³n¹ walcz¹cych ze sob¹ ludzi i róŸnych nieznanych ci zwierz¹t. Grube œciany uniemo¿liwiaj¹ jak¹kolwiek próbê ucieczki, a zamontowane w nich specjalne wentyle œci¹gaj¹ szkar³at, który unosi siê w powietrzu.
+0

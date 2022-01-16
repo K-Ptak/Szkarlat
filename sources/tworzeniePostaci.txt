@@ -1,0 +1,18 @@
+Podaj swoje imiê:
+Wybierz profesjê:
+£owca
+Specjalizuj¹cy siê w obs³udze szkar³atnych muszkietów, potrafi manipulowaæ szkar³atem by panowaæ nad swoimi pociskami i os³abiaæ przeciwników.
+Archont
+Nale¿¹cy do tajemniczego stworzyszenia poœwiêci³ swoje cia³o by staæ siê jednoœci¹ ze szkar³atem. Stworzony na nowo z zaklêtych run potrafi nimi manipulowaæ i zmieniaæ ich uk³ad w celach zarówno ofensywnych, jak i defensywnych.
+Klucznik
+Wygnany arystokrata, zwany przewrotnie klucznikiem, z rêk¹ skut¹ ³añcuchem na znak pogardy. Walcz¹c o przetrwanie nauczy³ siê panowaæ nad ³añcuchem przy pomocy szkar³atu, który sta³ siê jego g³ównym orê¿em.   
+Czy chcesz zobaczyæ wstêp fabularny?
+...
+Budzisz siê skulony w drewnianej skrzyni.
+Przez pêkniêcie w jednej z desek wpada ma³y promieñ przyszarzonego œwiat³a.
+Próbujesz siê ruszyæ ale czujesz ¿e twoje rêce i nogi s¹ czymœ spêtane.
+S³yszysz zbli¿aj¹ce siê do ciebie kroki.
+"Kolejny? To ju¿ trzeci w tym tygodniu. Baron widaæ siê nie patyczkuje!"
+"Spokojnie, ju¿ Ci otwieram."
+Przez szpare zostaje wepchniêty metalowy prêt, który wy³amuje deski ze spróchnia³ej skrzyni.
+Nieznajoma pomaga Ci wstaæ i uœmiecha sie patrz¹c na Ciebie.

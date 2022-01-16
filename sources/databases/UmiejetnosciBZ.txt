@@ -1,0 +1,15 @@
+0
+Przekierowanie
+10
+15
+Przy pomocy modu³u celowniczego wystrzeliwujesz sterowany pocisk, który trafia wroga kilka razy.
+1
+Konfiguracja: Topór
+15
+30
+Przekszta³casz swoj¹ rêkê w kszta³t toporu, który zdajesz druzgoc¹cy cios.
+2
+Rozgrzanie ³añcucha
+12
+20
+Nasycasz ³añcuch szkar³atem, który emituje jaskrawoczerwony p³omieñ na jego powierzchni.

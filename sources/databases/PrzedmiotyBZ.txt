@@ -1,0 +1,10 @@
+0
+Ma³a butelka zió³
+10
+leczenie
+Buteleczka zawieraj¹ca mieszankê kilku pospolitych zió³ wystêpuj¹cych w Marze, Leczy lekkie i powierzchowne rany.
+1
+Ma³a fiolka szkar³atu
+5
+szkarlat
+Nie do koñca legalna próbka szkar³atu, który mo¿e byæ nadal wch³oniêty.
