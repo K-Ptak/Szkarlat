@@ -10,3 +10,15 @@ Po miesi¹cach u¿ywania, runy te zatraci³y swoj¹ podatnoœæ na szkar³at, utrudniaj
 Zardzewia³y ³añcuch
 5
 Pokryty rdz¹ i krusz¹cy siê ³añcuch, który dni swojej œwietnoœci mia³ dawno za sob¹.
+3
+Prowizoryczny muszkiet
+10
+Zbudowany z metalu z po³amanych mieczy, z drewnianym wykoñczeniem. Pomimo swojego amatorskiego wygl¹du i budowy, moc¹ przewy¿sza wiêkszoœæ standardowych muszkietów.
+4
+Pomniejsze runy
+10
+Ma³e runy przemycone do wnêtrza sfery, mimo swego rozmiaru s¹ bardzo podatne na szkar³at.
+5
+Stopiony ³añcuch
+10
+£añcuch skonstruowany ze stopnionego metalu z pancerzy z areny, wyj¹tkowo trwa³y jak na materia³ z którego jest wykonany.

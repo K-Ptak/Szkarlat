@@ -13,3 +13,18 @@ Rozgrzanie ³añcucha
 12
 20
 Nasycasz ³añcuch szkar³atem, który emituje jaskrawoczerwony p³omieñ na jego powierzchni.
+3
+Strza³ z biodra
+20
+30
+Skupiaj¹c siê na celu oddajesz dwa celne strza³y z biodra.
+4
+Konfiguracja: M³ot
+25
+60
+Kszta³tujesz z obu r¹k potê¿ny m³ot bojowy, którym rozgramiasz przeciwnika.
+5
+Splot
+24
+45
+Oplatasz ³añcuchem przeciwnika, œciskaj¹c go i zadaj¹c okropne rany.

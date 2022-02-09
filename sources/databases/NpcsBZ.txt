@@ -1,0 +1,42 @@
+0
+Lilith
+Lilith opiera siê o œciane, nuc¹c jak¹œ melodiê.
+Lilith ubrana jest w skórzany strój myœliwski. Ma opaskê na lewym oku oraz widoczn¹ bliznê po tej stronie twarzy, wygl¹da jak rana po jakimœ dzikim zwierzêciu.
+dialog_0.txt
+-1
+1
+Kowal
+Kowal kuje dziwnie wygl¹daj¹cy miecz i zerka na swojego syna.
+Kowal jest cz³owiekiem w œrednim wieku. Wygl¹da, ¿e jest bardzo skupiony na swojej pracy i przyk³ada szczególn¹ precyzjê do niej.
+dialog_1.txt
+katalog_kowal.txt
+2
+Zbrojmistrz
+Zbrojmistrz siedzi na skrzypi¹cym krzeœle i poleruje pancerz pokryty runami.
+Zbrojmistrz jest drobny i w miarê m³ody. Mimo to, nosi on ciê¿k¹ zbrojê która wydaje siê dla niego trochê za du¿a. 
+dialog_2.txt
+katalog_zbrojmistrz.txt
+3
+Stra¿nik
+Stra¿nik strze¿e bramy do windy wyjœciowej.
+Stra¿nik ubrany w pancerz stra¿y Barona, z wielkim herbem na piersi. Jest widocznie zmêczony i rozdra¿niony.
+dialog_3.txt
+-1
+4
+Karczmarz
+Karczmarz z uœmiechem poleruje kufle po piwie i zagaduje klientów.
+Karczmarz jest dosyæ wysokim, podstarza³ym cz³owiekiem. Widaæ po nim ¿e naprawdê lubi swoj¹ pracê, a rozmawianie z klientami sprawia mu wiele przyjemnoœci.
+dialog_4.txt
+-1
+5
+Sprzedawca
+Sprzedawca stoi za lekko po³amanym stolikiem i przegl¹da skrzynie z zapasami.
+Sprzedawca ubrany jest w bia³y lniany strój, a na g³owie nosi du¿y czerwony kapelusz. Po jego twarzy widaæ ¿e prze¿y³ on ju¿ swoje lata.
+dialog_5.txt
+katalog_sprzedawca.txt
+6
+Naganiacz
+Zamaskowany Naganiacz pilnuje tablicy i milcz¹c wrêcza zap³ate w zamian za trofea pokonanych oponentów z areny.
+Naganiacz jest niski, ubrany w wielk¹ czarn¹ szate, ods³aniaj¹c¹ jedynie jego oczy.
+dialog_6.txt
+-1

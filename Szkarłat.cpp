@@ -1,4 +1,5 @@
-﻿#include <iostream>
+﻿//Kamil Ptak Grupa 4/8
+#include <iostream>
 #include <string>
 #include <windows.h>
 #include <locale.h>
@@ -7,10 +8,27 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+#include <random>
+#include <ctime>
 
 using namespace std;
 
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); //Uchwyt konsoli, na jego podstawie działają funkcje kolorowyTekst() i kolorowyTekstZPliku(), pozwala na modyfikacje bufora konsoli
+
+//--------------------LICZBY PSEUDOLOSOWE------------------------//
+mt19937 generator(time(nullptr));
+uniform_int_distribution<int> losowanieZeroJedynkowe(0, 1);
+uniform_int_distribution<int> losowanieJednaCzwarta(0, 3);
+
+//--------------------------TOKENY-------------------------------//
+
+//tokeny mają na celu upewnienie się czy program funkcjonuje prawidłowo pomijając/wywołując daną funkcje zależnie od sytuacji, w której są użyte.
+
+int tokenWyjscia = 1; //zmienna globalna używana by kończyć grę (kończy pętlę rozgrywki)
+
+int tokenKontrolny = 1; //zmienna używana by funkcja wprowadzPolecenie() nie została wywoływana sama z siebie po wykonaniu danych funkcji (niektóre funkcje interpretera które pobierają od użytkownika input sprawiają że wprowadzPolecenie() samo się wykonuje, wyrzucając krotkieStatystyki() i niepoprawnePolecenie());
+
+int tokenIntro = 0; //zmienna używana w celu wywołania wprowadzającego dialogu, jeśli wynosi ona 1 (jej wartość zmienia się zależnie od wyboru użytkownika czy chce zobaczyć wprowadzenie)
 
 //-----------------------------KOLORY----------------------------//
 
@@ -41,7 +59,7 @@ void kolorowyTekst(string tekst, string kolor) { //Funkcja wypisująca podany te
 	resetKoloru();
 }
 
-void kolorowyTekstZPliku(string adresPliku, string kolor) {
+void kolorowyTekstZPliku(string adresPliku, string kolor) { //Modyfikacja funkcji kolorowyTekst(), która zamiast pobierać string, odczytuje dane z pliku (tylko używane przy Intrze gry)
 	ifstream plikIntro(adresPliku);
 	string tekst{};
 	SetConsoleTextAttribute(hConsole, sprawdzanieKoloru(kolor));
@@ -63,8 +81,8 @@ vector<string> UmiejetnosciBZ;
 vector<string> LokacjeBZ;
 vector<string> KlasyBZ;
 
-vector<int> MapaGry;
-int x_max = 4;	//te zmienne służą jako maksymalne pozycje w MapaGry zanim wyjdzie się poza zakres
+//zmienne graniczne mapy
+int x_max = 4;	//te zmienne służą jako maksymalne pozycje mapy gry, mają uniemożliwić graczowi wyjście "poza mape" (wykroczenie poza wektor)
 int x_min = 0;
 int y_max = 4;
 int y_min = 0;
@@ -88,16 +106,19 @@ bool wczytajDoBazy(string adresBazy, vector<string>&baza, int liczbaObiektow, in
 	return true;
 }
 
-string wypiszZBazy(vector<string>& baza, int id, int index) {
+string wypiszZBazy(vector<string>& baza, int id, int index) {//funkcja wypisuje z podanej bazy daną linijkę danych. Każdy element w danej bazie ma tą samą liczbę elementów, przez co elementy występują na zasadzie wielokrotności czynnika (z wyjątkiem dla pierwszego elementu, dla którego jest to 0)
 	int dane{};
 	if (baza == KlasyBZ) {
-		dane = (id * 2) + index;
+		dane = (id * 3) + index;
 	}
 	if (baza == BronieBZ || baza == ZbrojeBZ) {
 		dane = (id * 4) + index;
 	}
 	if (baza == LokacjeBZ || baza == UmiejetnosciBZ || baza == PrzedmiotyBZ) {
 		dane = (id * 5) + index;
+	}
+	if (baza == PrzeciwnicyBZ || baza == NpcsBZ) {
+		dane = (id * 6) + index;
 	}
 	return baza[dane];
 }
@@ -122,12 +143,12 @@ public:
 	int zbroja;
 	int ekwipunek[10]{};
 	int umiejetnosci[10]{};
-	void kalkulowanieReputacji() {//Returns players' reputacja
+	void kalkulowanieReputacji() {//Zwraca reputację gracza
 		if (punktyReputacji < 25) reputacja = "Wróg publiczny";
 		else if (punktyReputacji > 75) reputacja = "Nadzieja ludu";
 		else reputacja = "Neutralna";
 	}
-	void zwracanieKlasy() {
+	void zwracanieKlasy() {//Wypisuje z bazy nazwę klasy gracza
 		switch (klasaPostaci) {
 		case 0:
 			cout<<wypiszZBazy(KlasyBZ, 0, 1);
@@ -152,7 +173,7 @@ public:
 		cout << "Poznane umiejętności:" << endl;
 		for (int i = 0; i < 10; i++) {
 			if (umiejetnosci[i] != -1) {
-				kolorowyTekst(wypiszZBazy(UmiejetnosciBZ, ekwipunek[i], 1), "blue");
+				kolorowyTekst(wypiszZBazy(UmiejetnosciBZ, umiejetnosci[i], 1), "blue");
 				cout << "\t";
 			}
 			if (i > 0 && i % 2 == 0) {
@@ -175,6 +196,14 @@ public:
 		cout << "Na sobie: ";
 		kolorowyTekst(wypiszZBazy(ZbrojeBZ, zbroja, 1), "cyan");
 		cout << endl;
+		cout << "-----------------------------------------" << endl;
+		cout << "W kieszeni: ";
+		stringstream ss;	//stringstream służy tutaj aby dokonać konwersji z int do string, żeby funkcja kolorowyTekst() wyświetlała dobre wartości
+		string iloscZlota = "";
+		ss << zloto;
+		iloscZlota = ss.str();
+		kolorowyTekst(iloscZlota, "yellow");
+		cout << "złota"<<endl;
 		cout << "-----------------------------------------" << endl;
 		cout << "W ekwipunku: " << endl;
 
@@ -229,42 +258,290 @@ public:
 			cout << "Twój aktualny poziom to: " << poziomPostaci << endl;
 			zdrowieMax += 10;
 			szkarlatMax += 5;
+			if (poziomPostaci % 3 == 0) {
+				for (int i = 0; i < 10; i++) {
+					if (umiejetnosci[i] == -1) {
+						int idUmiejetnosci = poziomPostaci + klasaPostaci;
+						umiejetnosci[i] = stoi(wypiszZBazy(UmiejetnosciBZ, idUmiejetnosci, 0));
+						break;
+					}
+				}
+			}
 		}
 	}
 	void krotkieStatystyki() {//funkcja wypisuje tylko liczbe punktów życia, szkarłatu i doświadczenia. Wyświetlana jest przed każdym promptem od użytkownika
-		cout << "<" << zdrowie << "pz " << szkarlat << "szk " << doswiadczenie << "exp> ";
+		string ks="";
+		string str;
+		stringstream ss;	//stringstream służy tutaj aby dokonać konwersji z int do string, żeby funkcja kolorowyTekst() wyświetlała dobre wartości
+		ks += "<";
+		ss << zdrowie;
+		str = ss.str();
+		ss.str("");
+		ks += str;
+		ks += "pz ";
+		ss << szkarlat;
+		str = ss.str();
+		ss.str("");
+		ks += str;
+		ks += "szk ";
+		ss << doswiadczenie;
+		str = ss.str();
+		ks += str;
+		ks += "exp> ";
+		kolorowyTekst(ks, "cyan");
 	}
 };
 Bohater Gracz;
 
-//---------------------------MAPA GRY----------------------------//
+//-------------------------SYSTEM WALKI--------------------------//
 
-bool inicjalizacjaMapy(int liczbaRzedow, int liczbaKolumn) {
-	int idLokacji = 0;
-	int rozmiar = liczbaRzedow * liczbaKolumn;
-	MapaGry.resize(rozmiar);
-
-	for (int i = 0; i < rozmiar; i++) {
-		MapaGry[i] = idLokacji;
-		idLokacji++;
+void Walka(int id_przeciwnika) { //funkcja aktywowana jeśli gracz zainicjuje walke, konczy się gdy gracz albo przeciwnik będzie miał 0 lub mniej punktów życia
+	int tokenWalki = 0; //token używany by kończyć walkę, przyjmuje wartość 1, po wygranej i przegranej walce
+	
+	//zmienne przeciwnika
+	string przeciwnikNazwa = wypiszZBazy(PrzeciwnicyBZ, id_przeciwnika, 1);
+	int przeciwnikObrazenia = stoi(wypiszZBazy(PrzeciwnicyBZ, id_przeciwnika, 2));
+	int przeciwnikZdrowie = stoi(wypiszZBazy(PrzeciwnicyBZ, id_przeciwnika, 3));
+	int przeciwnikMaxZdrowie = przeciwnikZdrowie;
+	int przeciwnikPrzedmiot = stoi(wypiszZBazy(PrzeciwnicyBZ, id_przeciwnika, 4));
+	int przeciwnikDoswiadczenie = stoi(wypiszZBazy(PrzeciwnicyBZ, id_przeciwnika, 5));
+	//zmienne gracza
+	int graczObrazenia = stoi(wypiszZBazy(BronieBZ, Gracz.bron, 2));
+	int graczPancerz = stoi(wypiszZBazy(ZbrojeBZ, Gracz.zbroja, 2));
+	//obrazenia - pancerz gracza
+	przeciwnikObrazenia -= graczPancerz;
+	if (przeciwnikObrazenia < 0) {
+		przeciwnikObrazenia = 0;
 	}
-	if (idLokacji != (rozmiar)) return false;
-	else return true;
+	//
+	cout << endl;
+	cout << endl;
+	kolorowyTekst("---------------------------------","red");
+	Sleep(1000);
+	cout << endl;
+	kolorowyTekst("              WALKA              ", "red");
+	cout << endl;
+	Sleep(1000);
+	kolorowyTekst("---------------------------------", "red");
+	Sleep(1000);
+	cout << endl;
+	cout << endl;
+
+	int wybor{};
+	int umiejetnosc{};
+	int zajeteMiejsca{};
+	int przedmiot{};
+	int szansaNaTrafienie{};
+	while (tokenWalki != 1) {
+		kolorowyTekst(przeciwnikNazwa, "rose");
+		cout << "\t" << przeciwnikZdrowie << "/" << przeciwnikMaxZdrowie << "pz" << endl;
+		cout << endl;
+		//------------------------------------------------RUCH GRACZA-------------------------------------------------------//
+		Gracz.krotkieStatystyki();
+		cout << "     1.";
+		kolorowyTekst("Atak", "red");
+		cout << "     2.";
+		kolorowyTekst("Umiejętności", "blue");
+		cout << "     3.";
+		kolorowyTekst("Przedmioty", "green");
+		cout << endl;
+		if (wybor != 1 || wybor != 2 || wybor != 3) {
+			cin >> wybor;
+		}
+		switch (wybor) {
+		case 1:
+			cout << Gracz.imie << " atakuje " << przeciwnikNazwa << " za " << graczObrazenia << " obrażeń.";
+			przeciwnikZdrowie -= graczObrazenia;
+			break;
+		case 2:
+			zajeteMiejsca = 0;
+			cout << "Szkarłat: " << Gracz.szkarlat << "/" << Gracz.szkarlatMax << endl;
+			for (int i = 0; i < 10; i++) {
+				if (Gracz.umiejetnosci[i] != -1) {
+					cout << i << ". ";
+					kolorowyTekst(wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[i], 1), "blue");
+					cout << " ";
+					kolorowyTekst(wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[i], 2), "red");
+					kolorowyTekst(" szk","red");
+					cout << "\t";
+					zajeteMiejsca++;
+				}
+				if (i > 0 && i % 2 == 0) {
+					cout << endl;
+				}
+			}
+
+			cout << endl;
+			umiejetnosc = -1;
+			while(umiejetnosc<=-1 || umiejetnosc>=zajeteMiejsca){
+				cin >> umiejetnosc;
+			}
+			cout << endl;
+			if (Gracz.szkarlat >= (stoi(wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[umiejetnosc], 2)))) {
+				cout << Gracz.imie << " używa ";
+				kolorowyTekst(wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[umiejetnosc], 1), "blue");
+				cout << " zadając ";
+				cout << wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[umiejetnosc], 3);
+				cout << " obrażeń.";
+
+				Gracz.szkarlat -= stoi(wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[umiejetnosc], 2));
+				przeciwnikZdrowie -= stoi(wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[umiejetnosc], 3));
+			}
+			else if(Gracz.szkarlat < (stoi(wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[umiejetnosc], 2)))) {
+				cout << "Próbujesz użyć umiejętności, ale nie masz wystarczająco szkarłatu." << endl;
+			}
+			break;
+		case 3:
+			zajeteMiejsca = 0;
+			for (int i = 0; i < 10; i++) {
+				if (Gracz.ekwipunek[i] != -1) {
+					zajeteMiejsca++;
+				}
+			}
+
+			if (zajeteMiejsca > 0) {
+				kolorowyTekst("Którego przedmiotu chcesz użyć?", "cyan");
+				cout << endl;
+				for (int i = 0; i < 10; i++) {
+					if (Gracz.ekwipunek[i] != -1) {
+						cout << i << ". ";
+						kolorowyTekst(wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[i], 1), "green");
+						cout << "\t";
+					}
+					if (i > 0 && i % 2 == 0) {
+						cout << endl;
+					}
+				}
+
+				cout << endl;
+				przedmiot = -1;
+				while(przedmiot <= -1 || przedmiot>=zajeteMiejsca) {
+					cin >> przedmiot;
+				}
+				cout << endl;
+				if (wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[przedmiot], 3) == "leczenie") {
+					Gracz.zdrowie += stoi(wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[przedmiot], 2));
+					if (Gracz.zdrowie > Gracz.zdrowieMax) {
+						Gracz.zdrowie = Gracz.zdrowieMax;
+					}
+					cout << "Użyłeś ";
+					kolorowyTekst(wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[przedmiot], 1), "green");
+					cout << endl;
+					Gracz.ekwipunek[przedmiot] = -1;
+					Gracz.sortowanieEkwipunku();
+				}
+				else if (wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[przedmiot], 3) == "szkarlat") {
+					Gracz.szkarlat += stoi(wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[przedmiot], 2));
+					if (Gracz.szkarlat > Gracz.szkarlatMax) {
+						Gracz.szkarlat = Gracz.szkarlatMax;
+					}
+					cout << "Użyłeś ";
+					kolorowyTekst(wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[przedmiot], 1), "green");
+					cout << endl;
+					Gracz.ekwipunek[przedmiot] = -1;
+					Gracz.sortowanieEkwipunku();
+				}
+				else {
+					cout << "Nie można użyć tego przedmiotu!" << endl;
+				}
+			}
+			else {
+				cout << "Ekwipunek jest pusty."<<endl;
+			}
+			break;
+		}
+		cout << endl;
+		if (przeciwnikZdrowie <= 0) {
+			tokenWalki = 1;
+			cout << endl;
+			cout << przeciwnikNazwa << " został pokonany!" << endl;
+			cout << "Zdobywasz " << przeciwnikDoswiadczenie << "punktów doświadczenia!" << endl;
+			Gracz.doswiadczenie += przeciwnikDoswiadczenie;
+			for (int i = 0; i < 10; i++) {
+				if (Gracz.ekwipunek[i] == -1) {
+					Gracz.ekwipunek[i] = przeciwnikPrzedmiot;
+					cout << "Zdobywasz ";
+					cout << wypiszZBazy(PrzedmiotyBZ, przeciwnikPrzedmiot, 1);
+					cout << "!"<<endl;
+					break;
+				}
+			}
+			if (Gracz.szkarlat < Gracz.szkarlatMax) {
+				Gracz.szkarlat += 10;
+				if (Gracz.szkarlat > Gracz.szkarlatMax) {
+					Gracz.szkarlat = Gracz.szkarlatMax;
+				}
+				cout << "Odzyskujesz część szkarłatu" << endl;
+			}
+			Gracz.punktyReputacji += 0.5;
+			cout << "Zyskujesz trochę reputacji" << endl;
+			Gracz.czyNowyPoziom();
+			Sleep(1000);
+			tokenKontrolny = 0;
+		}
+		else {	//------------------------------------------------RUCH PRZECIWNIKA-------------------------------------------------------//
+			szansaNaTrafienie = losowanieZeroJedynkowe(generator);
+			if (szansaNaTrafienie == 1) {
+				cout << przeciwnikNazwa << " atakuje " << Gracz.imie << " zadając " << przeciwnikObrazenia << " obrażeń." << endl;
+				Gracz.zdrowie -= przeciwnikObrazenia;
+			}
+			else {
+				cout << "Udaje Ci się uniknąć ataku!" << endl;
+			}
+			if (Gracz.zdrowie <= 0) {
+				tokenWalki = 1;
+				tokenKontrolny = 0;
+				tokenWyjscia = 0;
+				cout << "Zostałeś pokonany!" << endl;
+				Sleep(1000);
+				cout << "Robi Ci się ciemno przed oczami" << endl;
+				cout << "Twoje ciało powoli bezwładnie osuwa się na podłogę" << endl;
+				Sleep(1000);
+				cout << "---------------------------" << endl;
+				Sleep(1000);
+				cout << "          Zginąłeś         " << endl;
+				Sleep(1000);
+				cout << "---------------------------" << endl;
+				Sleep(1000);
+			}
+		}
+	}
 }
 
-void wypiszLokacje() {
+bool szansaNaWalke() {//funkcja losuje czy gracz wchodząc na to dane pole zainicjuje walkę czy nie (1/4 szansy że tak)
+	int los = losowanieJednaCzwarta(generator);//losuje liczbe z zakresu {0, 1, 2, 3}
+	if (los == 3) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+void inicjacjaWalki() { //Rozpoczyna sekwencje walki, jeśli gracz będzie chciał udać się na jedno z wymienionych pól
+	int id = ((5 * Gracz.poz_y) + Gracz.poz_x);
+	if ((id == 18 || id == 19 || id == 23 || id == 24) && szansaNaWalke()) {
+		int id_przeciwnika = losowanieZeroJedynkowe(generator); //losuje liczbe z zakresu {0, 1}
+		Walka(id_przeciwnika);
+	}
+}
+
+//---------------------------MAPA GRY----------------------------//
+
+void wypiszLokacje() { // funkcja wypisuje pełny opis danej lokacji (nazwa, "wyjścia", opis, kogo można tu spotkać)
 	cout << endl;
 	int id = ((5 * Gracz.poz_y) + Gracz.poz_x); //obliczanie id lokacji na mapie
-	cout << wypiszZBazy(LokacjeBZ, id, 1);
+	kolorowyTekst(wypiszZBazy(LokacjeBZ, id, 1), "green"); //nazwa lokacji
 	cout << endl;
-	cout << wypiszZBazy(LokacjeBZ, id, 2);
+	kolorowyTekst(wypiszZBazy(LokacjeBZ, id, 2), "purple"); //możliwe kierunki ruchu z lokacji
 	cout << endl;
-	cout << wypiszZBazy(LokacjeBZ, id, 3);
+	cout << wypiszZBazy(LokacjeBZ, id, 3);//opis lokacji
 	cout << endl;
-	if (wypiszZBazy(LokacjeBZ, id, 4) != "0") {
-		cout << wypiszZBazy(LokacjeBZ, id, 4);
+	if (wypiszZBazy(LokacjeBZ, id, 4) != "-1") { //-1 oznacza że nikogo tu nie ma
+		kolorowyTekst(wypiszZBazy(NpcsBZ, stoi(wypiszZBazy(LokacjeBZ, id, 4)), 2), "rose"); //pobiera liczbę z LokacjeBZ oraz porównuje ją w bazie NpcsBZ, zwracając opis postaci która się tu znajduje
 		cout << endl;
 	}
+	cout << endl;
 }
 
 bool CzyMoznaPrzejsc(string kierunek) { //funkcja sprawdza czy gracz może przejść ze "startowej" lokacji do kolejnej (przeciwdziała wychodzeniu poza mape albo przez fabularne "ściany")
@@ -286,22 +563,34 @@ bool CzyMoznaPrzejsc(string kierunek) { //funkcja sprawdza czy gracz może przej
 	}
 }
 
-void ruchNaMapie(string kierunek) {
+void ruchNaMapie(string kierunek) {//funkcja przesuwa gracza na dane pole, zmieniając jego pozycje w osi x i y, dodatkowo sprawdza czy dane pole posiada szanse na walkę
 	if ((kierunek == "n" || kierunek == "N") && Gracz.poz_y!=y_min && CzyMoznaPrzejsc("n")) {
 		Gracz.poz_y--;
-		wypiszLokacje();
+		inicjacjaWalki();
+		if (tokenWyjscia != 0) {
+			wypiszLokacje();
+		}
 	}
 	else if ((kierunek == "s" || kierunek == "S") && Gracz.poz_y!=y_max && CzyMoznaPrzejsc("s")) {
 		Gracz.poz_y++;
-		wypiszLokacje();
+		inicjacjaWalki();
+		if (tokenWyjscia != 0) {
+			wypiszLokacje();
+		}
 	}
 	else if ((kierunek == "w" || kierunek == "W") && Gracz.poz_x!=x_min && CzyMoznaPrzejsc("w")) {
 		Gracz.poz_x--;
-		wypiszLokacje();
+		inicjacjaWalki();
+		if (tokenWyjscia != 0) {
+			wypiszLokacje();
+		}
 	}
 	else if ((kierunek == "e" || kierunek == "E") && Gracz.poz_x!=x_max && CzyMoznaPrzejsc("e")) {
 		Gracz.poz_x++;
-		wypiszLokacje();
+		inicjacjaWalki();
+		if (tokenWyjscia != 0) {
+			wypiszLokacje();
+		}
 	}
 	else {
 		cout << endl;
@@ -320,13 +609,249 @@ bool istnieje(string adresPliku){//Funkcja zwracająca true/false zależnie od t
 	}
 }
 
+//---------------------------DIALOGI-----------------------------//
+
+string dobierzDialog(int numerPliku) { // wyznacza z którego pliku program ma wypisywać tekst do dialogów
+	string adresDialogu;
+	stringstream ss;	//stringstream służy tutaj aby dokonać konwersji z int do string, żeby funkcja kolorowyTekst() wyświetlała dobre wartości
+	string zwracanyAdres;
+	ss << numerPliku;
+	adresDialogu = ss.str();
+	zwracanyAdres = "../sources/dialogs/dialog_" + adresDialogu + ".txt";
+	return zwracanyAdres;
+}
+
+void wyswietlDialog(int idNpc) {
+	ifstream dialog(dobierzDialog(idNpc));
+	string linijka;
+	int wybor = -1;
+	if (idNpc == 0) {
+		string pobraneKwestie[4]{};
+		int i = 0;
+		while (getline(dialog, linijka)) {
+			pobraneKwestie[i]=linijka;
+			i++;
+		}
+		while (wybor != 0) {
+			cout << endl;
+			cout << "1. Co ja tu robie?" << endl;
+			cout << "2. Sfera?" << endl;
+			cout << "3. Da się jakoś stąd wydostać?" << endl;
+			cout << "4. O co chodzi z tym całym szkarłatem?" << endl;
+			cout << "0. [Skończ rozmowę]" << endl;
+			cin >> wybor;
+			if (wybor > 0 && wybor <= 4) {
+				cout << pobraneKwestie[(wybor - 1)] << endl;
+			}
+		}
+		cout << endl;
+		wypiszLokacje();
+	}
+	if (idNpc == 1) {
+		string pobraneKwestie[3]{};
+		int i = 0;
+		while (getline(dialog, linijka)) {
+			pobraneKwestie[i] = linijka;
+			i++;
+		}
+		while (wybor != 0) {
+			cout << endl;
+			cout << "1. Opłaca się taki interes?" << endl;
+			cout << "2. Co można u Ciebie kupić?" << endl;
+			cout << "3. Skąd macie materiały w takim miejscu jak to?" << endl;
+			cout << "0. [Skończ rozmowę]" << endl;
+			cin >> wybor;
+			if (wybor > 0 && wybor <= 3) {
+				cout << pobraneKwestie[(wybor - 1)] << endl;
+			}
+		}
+		cout << endl;
+		wypiszLokacje();
+	}
+	if (idNpc == 4) {
+		string pobraneKwestie[2]{};
+		int i = 0;
+		while (getline(dialog, linijka)) {
+			pobraneKwestie[i] = linijka;
+			i++;
+		}
+		while (wybor != 0) {
+			cout << endl;
+			cout << "1. Karczmarzu, masz może jakieś wieści co się dzieje poza sferą?" << endl;
+			cout << "2. Dobrze wiedzie się interes?" << endl;
+			cout << "0. [Skończ rozmowę]" << endl;
+			cin >> wybor;
+			if (wybor > 0 && wybor <= 2) {
+				cout << pobraneKwestie[(wybor - 1)] << endl;
+			}
+		}
+		cout << endl;
+		wypiszLokacje();
+	}
+	if (idNpc == 2 || idNpc == 3 || idNpc == 5 || idNpc == 6) {
+		cout << endl;
+		while (getline(dialog, linijka)) {
+			cout << linijka << endl;
+			Sleep(1000);
+		}
+		cout << endl;
+	}
+
+	dialog.close();
+	tokenKontrolny = 0;
+}
+
+void dobierzKatalog(int numerKatalogu) {
+	string linijkaKatalogu{};
+	int numerProduktu = 1;
+	if (numerKatalogu == 1) {
+		ifstream plikKatalogu("../sources/dialogs/katalog_kowal.txt");
+		for (int i = 0; i < 3; i++) {
+			if (i == Gracz.klasaPostaci) {
+				getline(plikKatalogu, linijkaKatalogu);
+				getline(plikKatalogu, linijkaKatalogu);
+				cout << numerProduktu << ". ";
+				cout << linijkaKatalogu << "\t";
+				getline(plikKatalogu, linijkaKatalogu);
+				cout << linijkaKatalogu << " złota";
+				cout << endl;
+				numerProduktu++;
+			}
+		}
+		plikKatalogu.close();
+	}
+	else if (numerKatalogu == 2) {
+		ifstream plikKatalogu("../sources/dialogs/katalog_zbrojmistrz.txt");
+		for (int i = 0; i < 3; i++) {
+			if (i == Gracz.klasaPostaci) {
+				getline(plikKatalogu, linijkaKatalogu);
+				getline(plikKatalogu, linijkaKatalogu);
+				cout << numerProduktu << ". ";
+				cout << linijkaKatalogu << "\t";
+				getline(plikKatalogu, linijkaKatalogu);
+				cout << linijkaKatalogu << "złota";
+				cout << endl;
+				numerProduktu++;
+			}
+		}
+		plikKatalogu.close();
+	}else if(numerKatalogu == 5){
+		ifstream plikKatalogu("../sources/dialogs/katalog_sprzedawca.txt");
+		for (int i = 0; i < 2; i++) {
+			getline(plikKatalogu, linijkaKatalogu);
+			getline(plikKatalogu, linijkaKatalogu);
+			cout << numerProduktu << ". ";
+			cout << linijkaKatalogu << "\t";
+			getline(plikKatalogu, linijkaKatalogu);
+			cout << linijkaKatalogu << "złota";
+			cout << endl;
+			numerProduktu++;
+		}
+		plikKatalogu.close();
+	}
+	cout << endl;
+	cout << "----------------------------------------------------------" <<endl;
+	cout << "Wpisz 0, by anulować handel";
+	cout << endl;
+
+}
+
+void handel(int idNpc) {
+	int wybor{};
+	cout << endl;
+	cout << "----------------------------------------------------------" << endl;
+	cout << endl;
+	dobierzKatalog(idNpc);
+	cin >> wybor;
+	if (idNpc == 1) {
+		if (wybor == 1) {
+			if (Gracz.zloto >= 50) {
+				Gracz.bron = (Gracz.bron + 3);
+				Gracz.zloto -= 50;
+			}
+			else {
+				cout << "Nie masz wystarczająco złota!" << endl;
+			}
+		}
+	}
+
+	if (idNpc == 2) {
+		if (wybor == 1) {
+			if (Gracz.zloto >= 60) {
+				Gracz.zbroja = (Gracz.zbroja + 3);
+				Gracz.zloto -= 60;
+			}
+			else {
+				cout << "Nie masz wystarczająco złota!" << endl;
+			}
+		}
+	}
+
+	if (idNpc == 5) {
+		if (wybor == 1) {
+			if (Gracz.zloto >= 10) {
+				for (int i = 0; i < 10; i++) {
+					if (Gracz.ekwipunek[i] == -1) {
+						Gracz.ekwipunek[i] = 0;
+						Gracz.zloto -= 10;
+						break;
+					}
+				}
+			}
+			else {
+				cout << "Nie masz wystarczająco złota!" << endl;
+			}
+		}
+		if (wybor == 2) {
+			if (Gracz.zloto >= 10) {
+				for (int i = 0; i < 10; i++) {
+					if (Gracz.ekwipunek[i] == -1) {
+						Gracz.ekwipunek[i] = 1;
+						Gracz.zloto -= 10;
+						break;
+					}
+				}
+			}
+			else {
+				cout << "Nie masz wystarczająco złota!" << endl;
+			}
+		}
+	}
+	tokenKontrolny = 0;
+}
+
+void sprzedarzTrofeum() {
+	cout << "Pokazujesz swoje trofea" << endl;
+	int tranzakcje=0;
+	int ile_zlota=0;
+	for (int i = 0; i < 10; i++) {
+		if (Gracz.ekwipunek[i] == 2) {
+			Gracz.ekwipunek[i] = -1;
+			Gracz.zloto += stoi(wypiszZBazy(PrzedmiotyBZ, 2, 2));
+			ile_zlota += stoi(wypiszZBazy(PrzedmiotyBZ, 2, 2));
+			tranzakcje++;
+		}
+		if (Gracz.ekwipunek[i] == 3) {
+			Gracz.ekwipunek[i] = -1;
+			Gracz.zloto += stoi(wypiszZBazy(PrzedmiotyBZ, 3, 2));
+			ile_zlota += stoi(wypiszZBazy(PrzedmiotyBZ, 3, 2));
+			tranzakcje++;
+		}
+	}
+	if (tranzakcje > 0) {
+		cout << "Wymieniasz " << tranzakcje << " trofea na " << ile_zlota << " złota!" << endl;
+		cout << "Aktualnie masz " << Gracz.zloto << "złota." << endl;
+	}
+	else {
+		cout << "Nie masz przy sobie żadnych trofeów" << endl;
+	}
+
+	cout << endl;
+}
+
 //---------------------------INTERPRETER-------------------------//
 
-int tokenWyjscia = 1; //zmienna globalna używana by kończyć grę (kończy pętlę rozgrywki)
-
-int tokenKontrolny = 1; //zmienna używana by funkcja wprowadzPolecenie() nie została wywoływana sama z siebie po wykonaniu danych funkcji (niektóre funkcje interpretera które pobierają od użytkownika input sprawiają że wprowadzPolecenie() samo się wykonuje, wyrzucając krotkieStatystyki() i niepoprawnePolecenie());
-
-void niepoprawnePolecenie() {
+void niepoprawnePolecenie() { //wyświetla się kiedy program nie rozpozna komendy
 	cout << "hmm?" << endl;
 }
 
@@ -343,13 +868,12 @@ void interpreter(string arg1) {
 		cout << endl;
 		kolorowyTekst("----------------------------------", "green");
 		cout << endl;
-		cout << "\t";
-		kolorowyTekst("Zapisano grę", "green");
+		kolorowyTekst("           Zapisano grę           ", "green");
 		cout << endl;
 		kolorowyTekst("----------------------------------", "green");
 		cout << endl;
 	}
-	else if (arg1 == "spojrz") {
+	else if (arg1 == "spojrz") { //argument spojrz ma na celu wypisanie pełnego opisu danej lokacji
 		wypiszLokacje();
 	}
 	else if (arg1 == "statystyki" || arg1 == "staty") {
@@ -364,79 +888,128 @@ void interpreter(string arg1) {
 			Gracz.zapisz();
 		}
 		tokenWyjscia = 0;
-	}else {
+	}else if (arg1 == "pomoc" || arg1 == "komendy") {
+		cout << endl;
+		cout << "------------------------------" << endl;
+		cout << "Ruch: N E S W" << endl;
+		cout << "ekwipunek\tumiejetnosci" << endl;
+		cout << "statystyki" << endl;
+		cout << "spojrz" << endl;
+		cout << "rozmawiaj" << endl;
+		cout << "zapisz\twyjdz" << endl;
+		cout << "handluj" << endl;
+		cout << "------------------------------" << endl;
+		cout << "obejrzyj pancerz" << endl;
+		cout << "obejrzyj bron" << endl;
+		cout << "obejrzyj przedmiot" << endl;
+		cout << "uzyj przedmiotu" << endl;
+		cout << "wyrzuc przedmiot" << endl;
+		cout << "opis umiejetnosci" << endl;
+		cout << "przyrzyj sie" << endl;
+		cout << "------------------------------" << endl;
+	}
+	else if (arg1 == "rozmawiaj" || arg1 == "zagadaj") {
+		int id = ((5 * Gracz.poz_y) + Gracz.poz_x);
+		if (wypiszZBazy(LokacjeBZ, id, 4) != "-1") {
+			wyswietlDialog(stoi(wypiszZBazy(LokacjeBZ, id, 4)));
+		}
+		else {
+			cout << "Nikogo tutaj nie ma" << endl;
+		}
+	}
+	else if (arg1 == "handel" || arg1 == "handluj") {
+		int id = ((5 * Gracz.poz_y) + Gracz.poz_x);
+		string idNpc = wypiszZBazy(LokacjeBZ, id, 4);
+		if (idNpc == "1" || idNpc == "2" || idNpc == "5") {
+			handel(stoi(wypiszZBazy(LokacjeBZ, id, 4)));
+		}
+		else {
+			cout << "Nie ma tu nikogo z kim można handlować" << endl;
+		}
+	}
+	else {
 		niepoprawnePolecenie();
 	}
 }
 void interpreter(string arg1, string arg2) {
-	if (arg1 == "obejrz" || arg1 == "obejrzyj") {
+	if ((arg1 == "obejrz" || arg1 == "obejrzyj")&&(arg2 == "pancerz" || arg2 == "zbroja" || arg2 == "ubior" || arg2 == "ubranie")) {
 		cout << endl;
-		if (arg2 == "pancerz" || arg2 == "zbroja" || arg2 == "ubior" || arg2 == "ubranie") {
-			kolorowyTekst(wypiszZBazy(ZbrojeBZ, Gracz.zbroja, 1), "cyan");
-			cout << endl;
-			cout << wypiszZBazy(ZbrojeBZ, Gracz.zbroja, 3) << endl;
+		kolorowyTekst(wypiszZBazy(ZbrojeBZ, Gracz.zbroja, 1), "cyan");
+		cout << endl;
+		cout << "Wartość pancerza: ";
+		kolorowyTekst(wypiszZBazy(ZbrojeBZ, Gracz.zbroja, 2), "cyan");
+		cout << endl;
+		cout << wypiszZBazy(ZbrojeBZ, Gracz.zbroja, 3) << endl;
+		cout << endl;
+		tokenKontrolny = 0;
+	}
+	else if ((arg1 == "obejrz" || arg1 == "obejrzyj") && arg2 == "bron") {
+		kolorowyTekst(wypiszZBazy(BronieBZ, Gracz.bron, 1), "red");
+		cout << endl;
+		cout << "Obrażenia: ";
+		kolorowyTekst(wypiszZBazy(BronieBZ, Gracz.bron, 2), "red");
+		cout << endl;
+		cout << wypiszZBazy(BronieBZ, Gracz.bron, 3) << endl;
+		cout << endl;
+		tokenKontrolny = 0;
+	}
+	else if ((arg1 == "obejrz" || arg1 == "obejrzyj") && (arg2 == "przedmiot" || arg2 == "przedmioty")) {
+		cout << endl;
+		int zajeteMiejsca = 0;
+		for (int i = 0; i < 10; i++) {
+			if (Gracz.ekwipunek[i] != -1) {
+				zajeteMiejsca++;
+			}
 		}
-		else if (arg2 == "bron") {
-			kolorowyTekst(wypiszZBazy(BronieBZ, Gracz.bron, 1), "red");
+		if (zajeteMiejsca > 0) {
+			kolorowyTekst("Wybierz przedmiot który chcesz obejrzeć:", "green");
 			cout << endl;
-			cout << wypiszZBazy(BronieBZ, Gracz.bron, 3) << endl;
-		}
-		else if (arg2 == "przedmiot" || arg2 == "przedmioty") {
-			cout << endl;
-			int zajeteMiejsca = 0;
 			for (int i = 0; i < 10; i++) {
 				if (Gracz.ekwipunek[i] != -1) {
-					zajeteMiejsca++;
+					cout << i << ". ";
+					kolorowyTekst(wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[i], 1), "green");
+					cout << "\t";
+				}
+				if (i > 0 && i % 2 == 0) {
+					cout << endl;
 				}
 			}
-			if (zajeteMiejsca > 0) {
-				kolorowyTekst("Wybierz przedmiot który chcesz obejrzeć:", "green");
-				cout << endl;
-				for (int i = 0; i < 10; i++) {
-					if (Gracz.ekwipunek[i] != -1) {
-						cout << i << ". ";
-						kolorowyTekst(wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[i], 1), "green");
-						cout << "\t";
-					}
-					if (i > 0 && i % 2 == 0) {
-						cout << endl;
-					}
-				}
 
-				int ogladane;
-				cin >> ogladane;
-				if (ogladane >= 0 && ogladane <= zajeteMiejsca) {
-					cout << endl;
-					kolorowyTekst(wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 1), "green");
-					cout << endl;
-					if (wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 3) == "leczenie") {
-						cout << "Leczy ";
-						cout<<wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 2);
-						cout << " punktów zdrowia." << endl;
-					}
-					else if (wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 3) == "szkarlat") {
-						cout << "Przywraca ";
-						cout<<wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 2);
-						cout << " szkarłatu." << endl;
-					}
-					cout<<wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 4);
-					cout << endl;
-					cout << endl;
+			int ogladane;
+			cin >> ogladane;
+			if (ogladane >= 0 && ogladane <= zajeteMiejsca) {
+				cout << endl;
+				kolorowyTekst(wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 1), "green");
+				cout << endl;
+				if (wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 3) == "leczenie") {
+					cout << "Leczy ";
+					cout << wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 2);
+					cout << " punktów zdrowia." << endl;
 				}
-				else {
-					cout << "Nie masz takiego przedmiotu" << endl;
+				else if (wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 3) == "szkarlat") {
+					cout << "Przywraca ";
+					cout << wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 2);
+					cout << " szkarłatu." << endl;
 				}
+				else if (wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 3) == "trofeum") {
+					cout << "Warte ";
+					cout << wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 2);
+					cout << " złota." << endl;
+				}
+				cout << wypiszZBazy(PrzedmiotyBZ, Gracz.ekwipunek[ogladane], 4);
+				cout << endl;
+				cout << endl;
 			}
 			else {
-				cout << "Twój ekwipunek jest pusty." << endl;
+				cout << "Nie masz takiego przedmiotu" << endl;
 			}
 		}
 		else {
-			niepoprawnePolecenie();
+			cout << "Twój ekwipunek jest pusty." << endl;
 		}
-		cout << endl;
+		tokenKontrolny = 0;
 	}
-	else if (arg1 == "opis" && (arg2 == "umi" || arg2 == "umiejetnosci" || arg2 == "skilli")) {
+	else if (arg1 == "opis" && (arg2 == "umi" || arg2 == "umiejetnosci" || arg2 == "skilli")) { //wyswietla posiadanie przez gracza umiejętności, następnie umożliwia wybranie poszczególnej umiejetności by wyświetlić jej pełny opis
 		cout << endl;
 		int zajeteMiejsca = 0;
 		for (int i = 0; i < 10; i++) {
@@ -468,7 +1041,7 @@ void interpreter(string arg1, string arg2) {
 			kolorowyTekst(wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[umiejetnosc], 2), "red");
 			cout << endl;
 			cout << "Obrażenia: ";
-			kolorowyTekst(wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[umiejetnosc], 2), "rose");
+			kolorowyTekst(wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[umiejetnosc], 3), "rose");
 			cout << endl;
 			cout << wypiszZBazy(UmiejetnosciBZ, Gracz.umiejetnosci[umiejetnosc], 4);
 			cout << endl;
@@ -576,16 +1149,21 @@ void interpreter(string arg1, string arg2) {
 			cout << "Twój ekwipunek jest pusty." << endl;
 		}
 	}
+	else if (arg1 == "przyjrzyj" && arg2 == "sie") {
+		int id = ((5 * Gracz.poz_y) + Gracz.poz_x);
+		if (wypiszZBazy(LokacjeBZ, id, 4) != "-1") {
+			cout << endl;
+			cout << wypiszZBazy(NpcsBZ, stoi(wypiszZBazy(LokacjeBZ, id, 4)), 3);
+			cout << endl;
+			tokenKontrolny = 0;
+		}
+		else {
+			cout << "Nikogo tutaj nie ma" << endl;
+		}
+	}
 	else {
 		niepoprawnePolecenie();
 	}
-}
-
-void interpreter(string arg1, string arg2, string arg3) {
-	cout << "3";
-}
-void interpreter(string arg1, string arg2, string arg3, string arg4) {
-	cout << "4";
 }
 
 void wprowadzPolecenie() { //Pobiera i dzieli polecenie gracza na pojedyncze składowe komendy
@@ -599,6 +1177,7 @@ void wprowadzPolecenie() { //Pobiera i dzieli polecenie gracza na pojedyncze sk�
 	getline(cin, LiniaKomend);
 
 	if (LiniaKomend != "") {
+		//poniższy fragment ma na celu pozyskanie od użytkownika danych w postaci string, rozdziela go na poszczególne słowa, sprawdza ilość słów i wysyła do odpowiedniej funkcji interpreter
 		string bufor;
 		stringstream ss(LiniaKomend);
 
@@ -616,12 +1195,6 @@ void wprowadzPolecenie() { //Pobiera i dzieli polecenie gracza na pojedyncze sk�
 			interpreter(parametry[0], parametry[1]);
 			tokenKontrolny = 0;
 			break;
-		case 3:
-			interpreter(parametry[0], parametry[1], parametry[2]);
-			break;
-		case 4:
-			interpreter(parametry[0], parametry[1], parametry[2], parametry[3]);
-			break;
 		default:
 			niepoprawnePolecenie();
 			break;
@@ -631,7 +1204,7 @@ void wprowadzPolecenie() { //Pobiera i dzieli polecenie gracza na pojedyncze sk�
 
 //-----------------------TWORZENIE POSTACI-----------------------//
 
-void tworzeniePostaci() {
+void tworzeniePostaci() { //funkcja mająca na celu przeprowadzić użytkownika przez proces tworzenia swojej postaci
 	string tekstTP;
 	ifstream plikTP("../sources/tworzeniePostaci.txt");
 
@@ -647,18 +1220,19 @@ void tworzeniePostaci() {
 
 	cout << endl << endl;
 
+	//poniższy fragment wyświetla możliwe klasy do wyboru przez gracza, użytkownik wybiera jedną i zostaje ona przypisana do Gracz.klasaPostaci
 	string kolorTP{};
+	int liczba = 1;
 	for (int i = 0; i <= 2; i++) {
 		if (i == 0) kolorTP = "green";
 		else if (i == 1) kolorTP = "cyan";
 		else if (i == 2) kolorTP = "purple";
-		getline(plikTP, tekstTP);
-		cout << i + 1 << ". ";
-		kolorowyTekst(tekstTP, kolorTP);
-		getline(plikTP, tekstTP);
+		cout << liczba << ". ";
+		kolorowyTekst(wypiszZBazy(KlasyBZ, i, 1), kolorTP);
 		cout << endl;
-		cout << tekstTP;
+		cout << wypiszZBazy(KlasyBZ, i, 2);
 		cout << endl << endl;
+		liczba++;
 	}
 	string klasaTP;
 	for (;;) { // pobiera od gracza nazwe klasy do momentu az bedzie prawidlowa, nastepnie przypisuje adekwatną wartość do Gracz.klasaPostaci 
@@ -677,6 +1251,7 @@ void tworzeniePostaci() {
 		}
 	}
 
+	//Pobiera od gracza informacje czy chce zobaczyć krótkie fabularne wprowadzenie i dialog, jeśli nie to jest to pomijane w pełni
 	getline(plikTP, tekstTP);
 	kolorowyTekst(tekstTP, "red");
 	cout << "Tak/Nie" << endl << endl;
@@ -684,16 +1259,18 @@ void tworzeniePostaci() {
 	string wstepTP;
 	cin >> wstepTP;
 	if (wstepTP == "Tak" || wstepTP == "tak" || wstepTP == "TAK" || wstepTP=="ok" || wstepTP=="OK" || wstepTP=="Ok") {
+		tokenIntro = 1;
 		system("cls");
 			while (!plikTP.eof()) {
 			getline(plikTP, tekstTP);
 			cout << tekstTP << endl;
-			Sleep(2000);
+			Sleep(4500);
 			}
 	}
 
 	plikTP.close();
 
+	//Przypisuje do obiektu Gracz wszystkie wymagane parametry, oraz dobiera odpowiednie umiejetnosci, bron, zbroje oraz przedmioty zależnie od klasyPostaci
 	Gracz.poziomPostaci = 1;
 	Gracz.doswiadczenie = 0;
 	Gracz.zdrowieMax = 50;
@@ -723,7 +1300,7 @@ void tworzeniePostaci() {
 	Gracz.ekwipunek[1] = 1;
 
 	ofstream plikZZapisami("../saves/saves-list.txt", ios::app);
-	plikZZapisami << Gracz.imie << "\n";
+	plikZZapisami << Gracz.imie << "\n";//zapisuje nazwe postaci do pliku służącego jako rejestr zapisów
 	plikZZapisami.close();
 
 	Gracz.zapisz();
@@ -732,7 +1309,7 @@ void tworzeniePostaci() {
 
 //--------------------WYPISYWANIE ZAPISÓW------------------------//
 
-void wypiszPliki() {
+void wypiszPliki() {//funkcja wypisuje wszystkie pliki zapisów, które program wykrywa w folderze saves
 	
 	if (istnieje("../saves/saves-list.txt")) {
 		cout << "Wybierz postać do wczytania:" << endl;
@@ -764,14 +1341,23 @@ void wypiszPliki() {
 
 			string nazwa;
 			getline(cin,nazwa);
-
+			int czyZnalezionoZapis = 0;
 			for (int i = 0; i < index; i++) {
-				if (nazwa == zapisy[i]) {
-					Gracz.imie = nazwa;
-					Gracz.wczytaj();
+				if (zapisy[i] == nazwa) {
+					czyZnalezionoZapis = 1;
 				}
 			}
-			system("cls");
+
+			if (czyZnalezionoZapis == 1) {
+				Gracz.imie = nazwa;
+				Gracz.wczytaj();
+				system("cls");
+			}
+			else {
+				cout << "Nie znaleziono takiego pliku zapisu!" << endl;
+				tokenWyjscia = 0;
+			}
+			
 	}else {
 		cout << "Nie znaleziono żadnych plików zapisu!" << endl;
 	}
@@ -779,14 +1365,16 @@ void wypiszPliki() {
 
 //----------------NOWA GRA I WCZYTAJ GRE-------------------------//
 
-void nowaGra() {
+void nowaGra() { //funkcja wywoływana podczas wybrania opcji nowa gra
 	tworzeniePostaci();
 	wypiszLokacje();
 }
 
-void wczytajGre() {
+void wczytajGre() { //funkcja wywoływana podczas wybrania opcji wczytaj gre
 	wypiszPliki();
-	wypiszLokacje();
+	if (tokenWyjscia != 0) { //warunek ten NIE zachodzi tylko kiedy użytkownik poda błędną nazwę wczytywanej postaci
+		wypiszLokacje();
+	}
 }
 
 //--------------SPRAWDZENIE I WCZYTANIE ASSETÓW-----------------//
@@ -794,7 +1382,7 @@ bool WczytywanieAssetow(){//Sprawdza czy wszystkie wymagane pliki istnieją i wc
 	kolorowyTekst("\tSzkarłat", "red");
 	cout << endl;
 
-	if (istnieje("../sources/tworzeniePostaci.txt") && istnieje("../sources/intro.txt") && istnieje("../sources/placeholder.txt")) {
+	if (istnieje("../sources/tworzeniePostaci.txt") && istnieje("../sources/intro.txt") && istnieje("../sources/dialogs/katalog_kowal.txt") && istnieje("../sources/dialogs/katalog_zbrojmistrz.txt") && istnieje("../sources/dialogs/katalog_sprzedawca.txt")) {
 		kolorowyTekst("Poprawnie zweryfikowano pliki źródłowe...","rose");
 		cout << endl;
 	}
@@ -803,7 +1391,7 @@ bool WczytywanieAssetow(){//Sprawdza czy wszystkie wymagane pliki istnieją i wc
 		return false;
 	}
 
-	if (wczytajDoBazy("ZbrojeBZ.txt", ZbrojeBZ, 6, 4) && wczytajDoBazy("PrzedmiotyBZ.txt", PrzedmiotyBZ, 2, 5) && wczytajDoBazy("BronieBZ.txt", BronieBZ, 6, 4) && wczytajDoBazy("PrzeciwnicyBZ.txt", PrzeciwnicyBZ, 2, 6) && wczytajDoBazy("NpcsBZ.txt", NpcsBZ, 6, 5) && wczytajDoBazy("UmiejetnosciBZ.txt", UmiejetnosciBZ, 6, 5) && wczytajDoBazy("LokacjeBZ.txt", LokacjeBZ, 25, 5) && wczytajDoBazy("KlasyBZ.txt", KlasyBZ, 3, 2)) {
+	if (wczytajDoBazy("ZbrojeBZ.txt", ZbrojeBZ, 6, 4) && wczytajDoBazy("PrzedmiotyBZ.txt", PrzedmiotyBZ, 4, 5) && wczytajDoBazy("BronieBZ.txt", BronieBZ, 6, 4) && wczytajDoBazy("PrzeciwnicyBZ.txt", PrzeciwnicyBZ, 2, 6) && wczytajDoBazy("NpcsBZ.txt", NpcsBZ, 7, 6) && wczytajDoBazy("UmiejetnosciBZ.txt", UmiejetnosciBZ, 6, 5) && wczytajDoBazy("LokacjeBZ.txt", LokacjeBZ, 25, 5) && wczytajDoBazy("KlasyBZ.txt", KlasyBZ, 3, 3)) {
 		kolorowyTekst("Poprawnie wczytano wszystkie bazy zasobów...", "rose");
 		cout << endl;
 	}
@@ -811,16 +1399,6 @@ bool WczytywanieAssetow(){//Sprawdza czy wszystkie wymagane pliki istnieją i wc
 	cout << "Wykryto błąd wczytywania baz zasobów";
 		return false;
 	}
-
-	if (inicjalizacjaMapy(5, 5)) {
-		kolorowyTekst("Poprawnie zainicjowano mapę gry...", "rose");
-		cout << endl;
-	}
-	else {
-		cout << "Wykryto błąd inicjowania mapy";
-		return false;
-	}
-
 
 	kolorowyTekst("Wszystkie pliki są poprawne!","green");
 	cout << endl << endl << endl << endl << endl;
@@ -830,7 +1408,7 @@ bool WczytywanieAssetow(){//Sprawdza czy wszystkie wymagane pliki istnieją i wc
 
 //----------------------------------------------------------------//
 
-int start() {
+int start() { //funkcja wyświetla ekran startowy gry
 
 		kolorowyTekstZPliku("../sources/intro.txt", "red");
 		cout << endl << endl;
@@ -864,7 +1442,7 @@ int main(){
 			wczytajGre();
 			break;
 		default:
-			return EXIT_SUCCESS;
+			return 0;
 			break;
 		}
 		while (tokenWyjscia != 0) {
