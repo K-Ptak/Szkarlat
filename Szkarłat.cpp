@@ -349,11 +349,11 @@ void Walka(int id_przeciwnika) { //funkcja aktywowana jeśli gracz zainicjuje wa
 			cin >> wybor;
 		}
 		switch (wybor) {
-		case 1:
+		case 1:// atak
 			cout << Gracz.imie << " atakuje " << przeciwnikNazwa << " za " << graczObrazenia << " obrażeń.";
 			przeciwnikZdrowie -= graczObrazenia;
 			break;
-		case 2:
+		case 2:// uzycie umiejetnosci
 			zajeteMiejsca = 0;
 			cout << "Szkarłat: " << Gracz.szkarlat << "/" << Gracz.szkarlatMax << endl;
 			for (int i = 0; i < 10; i++) {
@@ -391,7 +391,7 @@ void Walka(int id_przeciwnika) { //funkcja aktywowana jeśli gracz zainicjuje wa
 				cout << "Próbujesz użyć umiejętności, ale nie masz wystarczająco szkarłatu." << endl;
 			}
 			break;
-		case 3:
+		case 3://użycie przedmiotu
 			zajeteMiejsca = 0;
 			for (int i = 0; i < 10; i++) {
 				if (Gracz.ekwipunek[i] != -1) {
@@ -611,7 +611,7 @@ bool istnieje(string adresPliku){//Funkcja zwracająca true/false zależnie od t
 
 //---------------------------DIALOGI-----------------------------//
 
-string dobierzDialog(int numerPliku) { // wyznacza z którego pliku program ma wypisywać tekst do dialogów
+string dobierzDialog(int numerPliku) { // zwraca adres pliku z którego pobierane są dane do dialogu
 	string adresDialogu;
 	stringstream ss;	//stringstream służy tutaj aby dokonać konwersji z int do string, żeby funkcja kolorowyTekst() wyświetlała dobre wartości
 	string zwracanyAdres;
@@ -621,7 +621,7 @@ string dobierzDialog(int numerPliku) { // wyznacza z którego pliku program ma w
 	return zwracanyAdres;
 }
 
-void wyswietlDialog(int idNpc) {
+void wyswietlDialog(int idNpc) { //pobiera id postaci niezależnej i na jego podstawie wyświetla dialog
 	ifstream dialog(dobierzDialog(idNpc));
 	string linijka;
 	int wybor = -1;
@@ -701,7 +701,7 @@ void wyswietlDialog(int idNpc) {
 	tokenKontrolny = 0;
 }
 
-void dobierzKatalog(int numerKatalogu) {
+void dobierzKatalog(int numerKatalogu) {//Wypisuje z odpowiedniego "katalogu handlu" wszystkie pozycje które dany gracz może kupić (dana klasa postaci może kupić tylko poszczególne przedmioty)
 	string linijkaKatalogu{};
 	int numerProduktu = 1;
 	if (numerKatalogu == 1) {
@@ -756,7 +756,7 @@ void dobierzKatalog(int numerKatalogu) {
 
 }
 
-void handel(int idNpc) {
+void handel(int idNpc) {//funkcja która prowadzi handel gracza z postacią niezależną, kupiona broń oraz zbroja zostaje od razu wymieniona (zastępuje poprzednie), a przedmioty o ile jest miejsce w ekwipunku zostają do niego dodane
 	int wybor{};
 	cout << endl;
 	cout << "----------------------------------------------------------" << endl;
@@ -820,7 +820,7 @@ void handel(int idNpc) {
 	tokenKontrolny = 0;
 }
 
-void sprzedarzTrofeum() {
+void wymienTrofea() {//funkcja sprawdza czy gracz ma jakieś przedmioty typu trofea w ekwipunku, jeśli tak to je sprzedaje
 	cout << "Pokazujesz swoje trofea" << endl;
 	int tranzakcje=0;
 	int ile_zlota=0;
@@ -837,6 +837,7 @@ void sprzedarzTrofeum() {
 			ile_zlota += stoi(wypiszZBazy(PrzedmiotyBZ, 3, 2));
 			tranzakcje++;
 		}
+		Gracz.sortowanieEkwipunku();
 	}
 	if (tranzakcje > 0) {
 		cout << "Wymieniasz " << tranzakcje << " trofea na " << ile_zlota << " złota!" << endl;
@@ -857,13 +858,13 @@ void niepoprawnePolecenie() { //wyświetla się kiedy program nie rozpozna komen
 
 //Przeładowana funkcja *interpreter* przetwarza komende daną przez użytkownika, zależnie od tego jak złożona była (ile miała słów) i wykonuje daną akcje
 void interpreter(string arg1) {
-	if (arg1 == "ekwipunek" || arg1 == "ekw" || arg1 == "eq") {
+	if (arg1 == "ekwipunek" || arg1 == "ekw" || arg1 == "eq") {// wyświetla ekwipunek gracza
 		Gracz.wypiszEkwipunek();
 	}
-	else if (arg1 == "n" || arg1 == "N" || arg1 == "s" || arg1 == "S" || arg1 == "e" || arg1 == "E" || arg1 == "w" || arg1 == "W") {
+	else if (arg1 == "n" || arg1 == "N" || arg1 == "s" || arg1 == "S" || arg1 == "e" || arg1 == "E" || arg1 == "w" || arg1 == "W") {//służy do poruszania się gracza na mapie gry
 		ruchNaMapie(arg1);
 	}
-	else if (arg1 == "zapisz" || arg1 == "save") {
+	else if (arg1 == "zapisz" || arg1 == "save") {//zapisuje grę
 		Gracz.zapisz();
 		cout << endl;
 		kolorowyTekst("----------------------------------", "green");
@@ -876,11 +877,11 @@ void interpreter(string arg1) {
 	else if (arg1 == "spojrz") { //argument spojrz ma na celu wypisanie pełnego opisu danej lokacji
 		wypiszLokacje();
 	}
-	else if (arg1 == "statystyki" || arg1 == "staty") {
+	else if (arg1 == "statystyki" || arg1 == "staty") {//wyświetla statystyki gracza
 		Gracz.statystyki();
-	}else if (arg1 == "umi" || arg1 == "umiejetnosci" || arg1 == "skille") {
+	}else if (arg1 == "umi" || arg1 == "umiejetnosci" || arg1 == "skille") {//wyświetla umiejetności gracza
 		Gracz.wypiszUmiejetnosci();
-	}else if (arg1 == "wyjscie" || arg1 == "wyjdz" || arg1 == "exit") {
+	}else if (arg1 == "wyjscie" || arg1 == "wyjdz" || arg1 == "exit") {//kończy grę (można wybrać czy dodatkowo zapisuje gre czy nie
 		cout << "Chcesz zapisać grę przed wyjściem? tak/nie" << endl;
 		string odp;
 		cin >> odp;
@@ -888,7 +889,7 @@ void interpreter(string arg1) {
 			Gracz.zapisz();
 		}
 		tokenWyjscia = 0;
-	}else if (arg1 == "pomoc" || arg1 == "komendy") {
+	}else if (arg1 == "pomoc" || arg1 == "komendy") { //wypisuje wszystkie komendy dostępne w grze (poza ich alternatywnymi wersjami)
 		cout << endl;
 		cout << "------------------------------" << endl;
 		cout << "Ruch: N E S W" << endl;
@@ -898,6 +899,7 @@ void interpreter(string arg1) {
 		cout << "rozmawiaj" << endl;
 		cout << "zapisz\twyjdz" << endl;
 		cout << "handluj" << endl;
+		cout << "wymien" << endl;
 		cout << "------------------------------" << endl;
 		cout << "obejrzyj pancerz" << endl;
 		cout << "obejrzyj bron" << endl;
@@ -908,7 +910,7 @@ void interpreter(string arg1) {
 		cout << "przyrzyj sie" << endl;
 		cout << "------------------------------" << endl;
 	}
-	else if (arg1 == "rozmawiaj" || arg1 == "zagadaj") {
+	else if (arg1 == "rozmawiaj" || arg1 == "zagadaj") {//wypisuje dialog
 		int id = ((5 * Gracz.poz_y) + Gracz.poz_x);
 		if (wypiszZBazy(LokacjeBZ, id, 4) != "-1") {
 			wyswietlDialog(stoi(wypiszZBazy(LokacjeBZ, id, 4)));
@@ -917,7 +919,7 @@ void interpreter(string arg1) {
 			cout << "Nikogo tutaj nie ma" << endl;
 		}
 	}
-	else if (arg1 == "handel" || arg1 == "handluj") {
+	else if (arg1 == "handel" || arg1 == "handluj") {//rozpoczyna handel
 		int id = ((5 * Gracz.poz_y) + Gracz.poz_x);
 		string idNpc = wypiszZBazy(LokacjeBZ, id, 4);
 		if (idNpc == "1" || idNpc == "2" || idNpc == "5") {
@@ -927,12 +929,21 @@ void interpreter(string arg1) {
 			cout << "Nie ma tu nikogo z kim można handlować" << endl;
 		}
 	}
+	else if(arg1 == "wymien"){//wymienia zdobyte przez gracza trofea na zloto
+		int id = ((5 * Gracz.poz_y) + Gracz.poz_x);
+		if (wypiszZBazy(LokacjeBZ, id, 4)=="6") {
+			wymienTrofea();
+		}
+		else {
+			cout << "Trofea wymieniać można tylko u Naganiacza" << endl;
+		}
+	}
 	else {
 		niepoprawnePolecenie();
 	}
 }
 void interpreter(string arg1, string arg2) {
-	if ((arg1 == "obejrz" || arg1 == "obejrzyj")&&(arg2 == "pancerz" || arg2 == "zbroja" || arg2 == "ubior" || arg2 == "ubranie")) {
+	if ((arg1 == "obejrz" || arg1 == "obejrzyj")&&(arg2 == "pancerz" || arg2 == "zbroja" || arg2 == "ubior" || arg2 == "ubranie")) { //wypisuje statystyki i opis Gracz.zbroja
 		cout << endl;
 		kolorowyTekst(wypiszZBazy(ZbrojeBZ, Gracz.zbroja, 1), "cyan");
 		cout << endl;
@@ -943,7 +954,7 @@ void interpreter(string arg1, string arg2) {
 		cout << endl;
 		tokenKontrolny = 0;
 	}
-	else if ((arg1 == "obejrz" || arg1 == "obejrzyj") && arg2 == "bron") {
+	else if ((arg1 == "obejrz" || arg1 == "obejrzyj") && arg2 == "bron") {//wypisuje statystyki i opis Gracz.bron
 		kolorowyTekst(wypiszZBazy(BronieBZ, Gracz.bron, 1), "red");
 		cout << endl;
 		cout << "Obrażenia: ";
@@ -953,7 +964,7 @@ void interpreter(string arg1, string arg2) {
 		cout << endl;
 		tokenKontrolny = 0;
 	}
-	else if ((arg1 == "obejrz" || arg1 == "obejrzyj") && (arg2 == "przedmiot" || arg2 == "przedmioty")) {
+	else if ((arg1 == "obejrz" || arg1 == "obejrzyj") && (arg2 == "przedmiot" || arg2 == "przedmioty")) {//wypisuje statystyki i opis wybranego przez gracza przedmiotu
 		cout << endl;
 		int zajeteMiejsca = 0;
 		for (int i = 0; i < 10; i++) {
@@ -1051,7 +1062,7 @@ void interpreter(string arg1, string arg2) {
 		}
 
 	}
-	else if (arg1 == "uzyj" && (arg2 == "przedmiot" || arg2 == "przedmiotu")) {
+	else if (arg1 == "uzyj" && (arg2 == "przedmiot" || arg2 == "przedmiotu")) { //pozwala użytkownikowi na wybór przedmiotu, a następnie używa go, zwiększając dane statystyki gracza
 		cout << endl;
 		int zajeteMiejsca = 0;
 		for (int i = 0; i < 10; i++) {
@@ -1113,7 +1124,7 @@ void interpreter(string arg1, string arg2) {
 			cout << "Twój ekwipunek jest pusty." << endl;
 		}
 	}
-	else if ((arg1 == "wyrzuc" || arg1 == "zostaw") && arg2 == "przedmiot") {
+	else if ((arg1 == "wyrzuc" || arg1 == "zostaw") && arg2 == "przedmiot") { //wyrzuca przedmiot z ekwipunku gracza
 		cout << endl;
 		int zajeteMiejsca = 0;
 		for (int i = 0; i < 10; i++) {
@@ -1140,6 +1151,7 @@ void interpreter(string arg1, string arg2) {
 			if (wyrzucane >= 0 && wyrzucane <= zajeteMiejsca) {
 				Gracz.ekwipunek[wyrzucane] = -1;
 				cout << "Przedmiot został wyrzucony." << endl;
+				Gracz.sortowanieEkwipunku();
 			}
 			else {
 				cout << "Nie masz takiego przedmiotu" << endl;
@@ -1149,7 +1161,7 @@ void interpreter(string arg1, string arg2) {
 			cout << "Twój ekwipunek jest pusty." << endl;
 		}
 	}
-	else if (arg1 == "przyjrzyj" && arg2 == "sie") {
+	else if (arg1 == "przyjrzyj" && arg2 == "sie") {//wypisuje opis postaci niezależnej
 		int id = ((5 * Gracz.poz_y) + Gracz.poz_x);
 		if (wypiszZBazy(LokacjeBZ, id, 4) != "-1") {
 			cout << endl;
