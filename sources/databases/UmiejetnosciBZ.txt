@@ -7,7 +7,7 @@ Przy pomocy modu³u celowniczego wystrzeliwujesz sterowany pocisk, który trafia w
 Konfiguracja: Topór
 15
 30
-Przekszta³casz swoj¹ rêkê w kszta³t toporu, który zdajesz druzgoc¹cy cios.
+Przekszta³casz swoj¹ rêkê w kszta³t toporu, którym zdajesz druzgoc¹cy cios.
 2
 Rozgrzanie ³añcucha
 12

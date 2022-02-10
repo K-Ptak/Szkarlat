@@ -6,7 +6,7 @@ W rogu karczmy dostrzegasz w miarê ma³y bar, przy którym siedz¹ niektórzy z klie
 1
 Karczma
 Kierunki: S W 
-Ta stara karczma widzia³a ju¿ swoje lepsze dni, lecz wci¹¿ jest pe³na klientów, a przynajmniej tych którzy mieli szczêœcie prze¿yæ kolejny dzieñ na arenie.
+Stara karczma widzia³a ju¿ swoje lepsze dni, lecz wci¹¿ jest pe³na klientów, a przynajmniej tych którzy mieli szczêœcie prze¿yæ kolejny dzieñ na arenie. W strone zachodu widzisz Karczmarza przy barze.
 -1
 2
 Stoisko 
