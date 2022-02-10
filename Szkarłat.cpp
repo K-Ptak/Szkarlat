@@ -502,7 +502,7 @@ void Walka(int id_przeciwnika) { //funkcja aktywowana jeśli gracz zainicjuje wa
 				cout << "          Zginąłeś         " << endl;
 				Sleep(1000);
 				cout << "---------------------------" << endl;
-				Sleep(1000);
+				Sleep(2000);
 			}
 		}
 	}
@@ -898,6 +898,7 @@ void interpreter(string arg1) {
 		if (odp == "tak") {
 			Gracz.zapisz();
 		}
+		Sleep(2000);
 		tokenWyjscia = 0;
 	}else if (arg1 == "pomoc" || arg1 == "komendy") { //wypisuje wszystkie komendy dostępne w grze (poza ich alternatywnymi wersjami)
 		cout << endl;
@@ -1383,11 +1384,14 @@ void wypiszPliki() {//funkcja wypisuje wszystkie pliki zapisów, które program 
 			}
 			else {
 				cout << "Nie znaleziono takiego pliku zapisu!" << endl;
+				Sleep(2000);
 				tokenWyjscia = 0;
 			}
 			
 	}else {
 		cout << "Nie znaleziono żadnych plików zapisu!" << endl;
+		Sleep(2000);
+		tokenWyjscia = 0;
 	}
 }
 
