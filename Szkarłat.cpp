@@ -258,7 +258,7 @@ public:
 			cout << "Twój aktualny poziom to: " << poziomPostaci << endl;
 			zdrowieMax += 10;
 			szkarlatMax += 5;
-			if (poziomPostaci % 3 == 0) {
+			if (poziomPostaci == 3) {
 				for (int i = 0; i < 10; i++) {
 					if (umiejetnosci[i] == -1) {
 						int idUmiejetnosci = poziomPostaci + klasaPostaci;
@@ -717,6 +717,11 @@ void dobierzKatalog(int numerKatalogu) {//Wypisuje z odpowiedniego "katalogu han
 				cout << endl;
 				numerProduktu++;
 			}
+			else {
+				getline(plikKatalogu, linijkaKatalogu);
+				getline(plikKatalogu, linijkaKatalogu);
+				getline(plikKatalogu, linijkaKatalogu);
+			}
 		}
 		plikKatalogu.close();
 	}
@@ -732,6 +737,11 @@ void dobierzKatalog(int numerKatalogu) {//Wypisuje z odpowiedniego "katalogu han
 				cout << linijkaKatalogu << "złota";
 				cout << endl;
 				numerProduktu++;
+			}
+			else {
+				getline(plikKatalogu, linijkaKatalogu);
+				getline(plikKatalogu, linijkaKatalogu);
+				getline(plikKatalogu, linijkaKatalogu);
 			}
 		}
 		plikKatalogu.close();
@@ -1317,6 +1327,12 @@ void tworzeniePostaci() { //funkcja mająca na celu przeprowadzić użytkownika 
 
 	Gracz.zapisz();
 	tokenKontrolny = 0;
+
+	cout << endl;
+	cout << "-------------------------------------------------" << endl;
+	cout << " wpisz \"pomoc\" by wyświetlić wszystkie komendy " << endl;
+	cout << "-------------------------------------------------" << endl;
+	cout << endl;
 };
 
 //--------------------WYPISYWANIE ZAPISÓW------------------------//
